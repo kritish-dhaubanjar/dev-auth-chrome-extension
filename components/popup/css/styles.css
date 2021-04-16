@@ -1,19 +1,23 @@
-*{
-    color: #454543;
+* {
+  color: #454543;
 }
-main{
-    padding: 16px;
-}
-
-.ui.loading.button.small{
-    padding-left: 11px;
-    padding-right: 11px;
+main {
+  padding: 16px;
 }
 
-.d-none{
-    display: none !important;
+.ui.loading.button.small {
+  padding-left: 11px;
+  padding-right: 11px;
 }
 
-.detail{
-    color: #e3e3e3;
+.d-none {
+  display: none !important;
+}
+
+.detail {
+  color: #e3e3e3;
+}
+
+.pb-8 {
+  padding-bottom: 8px !important;
 }
