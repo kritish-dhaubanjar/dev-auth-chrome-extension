@@ -9,6 +9,10 @@ const tokenForm = document.getElementById("tokenForm");
 const removeForm = document.getElementById("removeForm");
 const usersList = document.getElementById("userList");
 const deleteAllToken = document.getElementById("deleteAllToken");
+const clipboard = document.querySelector("#clipboard");
+
+const token = clipboard.querySelector("input");
+const copy = clipboard.querySelector("button");
 
 const urls = [
   "http://localhost",
@@ -34,15 +38,17 @@ function createListWithInnerHTML(users, parentContainer) {
     return `
     <div class="item">
       <div class="right floated content" id="${id}">
-        <button class="ui button small">Auth</button>
-        <button class="ui loading button small d-none">Loading</button>
+        <button class="ui button small m-0">Auth</button>
+        <button class="ui loading button small d-none m-0">Loading</button>
       </div>
-      <img class="ui avatar image" src="https://ui-avatars.com/api/?name=${username}&background=random&size=256" />
-      <div class="content">${username}</div>
+      <div class="d-flex align-items-center pt-4">
+        <img class="ui avatar image" src="https://ui-avatars.com/api/?name=${username}&background=random&size=256" />
+        <div class="content">${username}</div>
+      </div>
     </div>`;
   });
 
-  parentContainer.innerHTML = rows.join();
+  parentContainer.innerHTML = rows.join("");
 
   users.forEach(setupEventListener);
 }
@@ -149,6 +155,20 @@ function setupEventListener({ username, token }) {
 
   addEventListener(user_auth, user_loading, token);
 }
+
+urls.forEach((url) => {
+  chrome.cookies.get({ url, name: "accessToken" }, ({ value }) => {
+    token.setAttribute("value", value);
+  });
+});
+
+copy.addEventListener("click", () => {
+  if (token.getAttribute("value").length > 0) {
+    token.select();
+    document.execCommand("copy");
+    copy.innerHTML = "Copied";
+  }
+});
 
 fetch("https://vyaguta-extension-default-rtdb.firebaseio.com/requests.json")
   .then((res) => res.json())

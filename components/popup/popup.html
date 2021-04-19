@@ -20,6 +20,11 @@
 
       <div class="ui middle aligned divided list" id="userList"></div>
 
+      <div class="ui fluid mini action input mb-12" id="clipboard">
+        <input type="text" value="" placeholder="accessToken appears here" />
+        <button class="ui mini teal button">Copy</button>
+      </div>
+
       <div class="item d-none pb-8" id="tokenFormContainer">
         <form class="ui form" id="tokenForm">
           <div class="field">
@@ -35,9 +40,8 @@
           </button>
           <button class="ui primary button" type="submit">Add</button>
         </form>
+        <div class="ui divider"></div>
       </div>
-
-      <div class="ui divider"></div>
 
       <div class="ui labels">
         <a
@@ -54,7 +58,7 @@
           <div class="detail" id="count">N/A</div>
         </a>
 
-        <button class="ui red button mini" id="deleteAllToken">
+        <button class="ui label red button mini" id="deleteAllToken">
           Delete All
         </button>
       </div>

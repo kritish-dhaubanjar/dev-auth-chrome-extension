@@ -14,10 +14,30 @@ main {
   display: none !important;
 }
 
+.d-flex {
+  display: flex;
+}
+
+.align-items-center{
+  align-items: center;
+}
+
 .detail {
   color: #e3e3e3;
 }
 
 .pb-8 {
   padding-bottom: 8px !important;
+}
+
+.mb-12{
+  margin-bottom: 12px !important;
+}
+
+.m-0{
+  margin: 0 !important;
+}
+
+.pt-4{
+  padding-top: 4px;
 }
