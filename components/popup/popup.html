@@ -4,35 +4,40 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dev Auth Extension</title>
+    <title>Vyaguta Dev Auth</title>
     <link href="./css/semantic.min.css" rel="stylesheet" />
     <link href="./css/styles.css" rel="stylesheet" />
   </head>
   <body>
     <main>
-      <h4 class="ui header">
+      <h4 class="ui header middle aligned list">
         <img src="./assets/patrick.png" class="ui circular image small" />
-        <div class="content">Dev Auth Extension</div>
+        <div class="content">Vyaguta Dev Auth</div>
+        <button class="right floated mini ui teal button" id="addUser">
+          Add User
+        </button>
       </h4>
 
-      <div class="ui middle aligned divided list">
-        <div class="item">
-          <div class="right floated content" id="auth517">
-            <button class="ui button small">Auth</button>
-            <button class="ui loading button small d-none">Loading</button>
+      <div class="ui middle aligned divided list" id="userList"></div>
+
+      <div class="item d-none pb-8" id="tokenFormContainer">
+        <form class="ui form" id="tokenForm">
+          <div class="field">
+            <label>Username</label>
+            <input name="username" type="text" id="username" />
           </div>
-          <img class="ui avatar image" src="./assets/517.png" />
-          <div class="content">Lizzie Pfertner</div>
-        </div>
-        <div class="item">
-          <div class="right floated content" id="auth512">
-            <button class="ui button small">Auth</button>
-            <button class="ui loading button small d-none">Loading</button>
+          <div class="field">
+            <label>Token</label>
+            <textarea name="token" rows="2" id="token"></textarea>
           </div>
-          <img class="ui avatar image" src="./assets/512.png" />
-          <div class="content">Cal Vokins</div>
-        </div>
+          <button class="ui button" type="button" id="removeForm">
+            Cancel
+          </button>
+          <button class="ui primary button" type="submit">Add</button>
+        </form>
       </div>
+
+      <div class="ui divider"></div>
 
       <div class="ui labels">
         <a
@@ -48,6 +53,10 @@
           Token Issued
           <div class="detail" id="count">N/A</div>
         </a>
+
+        <button class="ui red button mini" id="deleteAllToken">
+          Delete All
+        </button>
       </div>
     </main>
 
