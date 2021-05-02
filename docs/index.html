@@ -8,11 +8,19 @@
     </style>
   </head>
   <body>
+    <center>
+      <img
+        src="https://img.shields.io/badge/Tokens-0-blue?style=for-the-badge&logo=json%20web%20tokens"
+        id="shields"
+      />
+    </center>
     <canvas id="myChart"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@1"></script>
     <script type="text/javascript">
+      const shield = document.getElementById("shields");
+
       window.onload = function () {
         fetch(
           "https://vyaguta-extension-default-rtdb.firebaseio.com/requests.json"
@@ -21,6 +29,13 @@
           .then((json) => {
             // Date
             const XY = {};
+
+            shield.setAttribute(
+              "src",
+              `https://img.shields.io/badge/Tokens-${
+                Object.values(json).length
+              }-blue?style=for-the-badge&logo=json%20web%20tokens`
+            );
 
             const usage = Object.values(json).map((record) =>
               new Date(record.at).toDateString()
