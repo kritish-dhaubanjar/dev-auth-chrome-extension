@@ -8,3 +8,5 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 #### Usage
 ![dev-auth-extension](https://user-images.githubusercontent.com/25634165/114313756-843bd980-9b17-11eb-9412-87ffbd5b0c50.gif)
 
+### Statistics
+![dev-auth-extension](https://firebasestorage.googleapis.com/v0/b/vyaguta-extension.appspot.com/o/chartjs.png?alt=media&token=71c42192-4f93-44df-96dd-72c907ae055b)

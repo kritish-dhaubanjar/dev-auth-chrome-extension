@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #myChart {
+        /* max-height: 400px; */
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myChart"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@1"></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        fetch(
+          "https://vyaguta-extension-default-rtdb.firebaseio.com/requests.json"
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            // Date
+            const XY = {};
+
+            const usage = Object.values(json).map((record) =>
+              new Date(record.at).toDateString()
+            );
+
+            usage.forEach((date) => {
+              if (XY[date]) ++XY[date];
+              else XY[date] = 1;
+            });
+
+            const dataPoints = Object.keys(XY).map((x) => {
+              return {
+                x: new Date(x),
+                y: XY[x],
+              };
+            });
+
+            //Setup
+            const labels = Object.keys(XY);
+
+            const data = {
+              labels: labels,
+              datasets: [
+                {
+                  label: `${usage.length} Tokens`,
+                  backgroundColor: "rgba(75, 192, 192, 0.25)",
+                  borderColor: "#4BC0C0",
+                  data: Object.values(XY),
+                  tension: 0.1,
+                },
+              ],
+            };
+            // Plugin
+            const plugin = {
+              id: "custom_canvas_background_color",
+              beforeDraw: (chart) => {
+                const ctx = chart.canvas.getContext("2d");
+                ctx.save();
+                ctx.globalCompositeOperation = "destination-over";
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+              },
+            };
+
+            //Config
+            const config = {
+              type: "line",
+              data,
+              plugins: [plugin, ChartDataLabels],
+              options: {
+                plugins: {
+                  datalabels: {
+                    color: "#4BC0C0",
+                    align: "top",
+                    offset: 8,
+                    font: {
+                      weight: "bold",
+                      size: "14",
+                    },
+                  },
+                },
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: Math.max(...Object.values(XY)) + 5,
+                      },
+                    },
+                  ],
+                },
+                animation: {
+                  onComplete: () => {
+                    const Base64Image = myChart.toBase64Image();
+                    console.log(Base64Image);
+                    // fetch(
+                    //   "https://vyaguta-extension-default-rtdb.firebaseio.com/chartjs.json",
+                    //   {
+                    //     method: "POST",
+                    //     body: JSON.stringify(Base64Image),
+                    //   }
+                    // );
+                  },
+                },
+
+                // animation: {
+                // onComplete: () => {
+                // const Base64Image = myChart.toBase64Image();
+                // console.log(Base64Image);
+                // fetch(
+                //   "https://vyaguta-extension-default-rtdb.firebaseio.com/chartjs.json",
+                //   {
+                //     method: "POST",
+                //     body: JSON.stringify(Base64Image),
+                //   }
+                // );
+                // },
+                // },
+              },
+            };
+            //Render
+            // Change default options for ALL charts
+            Chart.helpers.merge(Chart.defaults.global.plugins.datalabels, {
+              color: "#FE777B",
+            });
+
+            var myChart = new Chart(document.getElementById("myChart"), config);
+          });
+      };
+    </script>
+  </body>
+</html>
