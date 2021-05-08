@@ -3,25 +3,64 @@
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
+  import type { Token, User } from "./types/common";
+
+  import { auth } from "./services/auth";
+  import {
+    getTokens,
+    saveToken,
+    savedTokens,
+    deleteAllSavedTokens,
+  } from "./services/localStorage";
+
+  let storedTokens: Array<Token>;
+
+  savedTokens.subscribe((tokens) => (storedTokens = tokens));
+
   let isFormShown: boolean = false;
 
-  interface User {
-    name: string;
-    token: string;
-  }
-
-  let name = "";
-
-  const user: User = {
+  const INITIAL_USER_STATE: User = {
     name: "",
     token: "",
   };
 
-  const form = writable(user);
+  const form = writable(INITIAL_USER_STATE);
 
   const toggleForm = () => {
-    console.log(isFormShown);
     isFormShown = !isFormShown;
+  };
+
+  const resetForm = () => {
+    form.set(INITIAL_USER_STATE);
+  };
+
+  const handleFormSubmit = () => {
+    saveToken({
+      username: $form.name,
+      accessToken: $form.token,
+      refreshToken: $form.token,
+      isActive: true,
+      id: storedTokens.length + 1,
+    });
+
+    toggleForm();
+
+    resetForm();
+  };
+
+  onMount(() => {
+    getTokens();
+  });
+
+  let clickedId: number | null = null;
+
+  const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
+    clickedId = id;
+    auth({ refreshToken, accessToken }).finally(() => (clickedId = null));
+  };
+
+  const handleDeleteAllTokens = () => {
+    deleteAllSavedTokens();
   };
 </script>
 
@@ -44,8 +83,34 @@
       </button>
     </h4>
 
-    <div class="ui middle aligned divided list" id="userList" />
-
+    <div class="ui middle aligned divided list" id="userList">
+      {#each storedTokens as token}
+        <div class="item">
+          <div class="right floated content" id={token.accessToken}>
+            {#if clickedId == token.id}
+              <button class="ui loading button small m-0">Loading</button>
+            {:else}
+              <button
+                class="ui button small m-0"
+                type="button"
+                disabled={!token.isActive}
+                class:red={!token.isActive}
+                on:click={() => handleAuth(token)}
+                >{token.isActive ? "Auth" : "Expired"}</button
+              >
+            {/if}
+          </div>
+          <div class="d-flex align-items-center pt-4">
+            <img
+              class="ui avatar image"
+              src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
+              alt={token.username}
+            />
+            <div class="content">{token.username}</div>
+          </div>
+        </div>
+      {/each}
+    </div>
     <div class="ui fluid mini action input mb-12" id="clipboard">
       <input type="text" value="" placeholder="accessToken appears here" />
       <button class="ui mini teal button">Copy</button>
@@ -55,7 +120,7 @@
       <div class="item pb-8" id="tokenFormContainer">
         <form class="ui form" id="tokenForm">
           <div class="field">
-            <label>Username</label>
+            <label for="username">Username</label>
             <input
               name="username"
               type="text"
@@ -64,7 +129,7 @@
             />
           </div>
           <div class="field">
-            <label>Token</label>
+            <label for="token">Token</label>
             <textarea
               name="token"
               rows="2"
@@ -83,7 +148,7 @@
           <button
             class="ui primary button"
             type="button"
-            on:click={() => console.log(user.name)}>Add</button
+            on:click={handleFormSubmit}>Add</button
           >
         </form>
         <div class="ui divider" />
@@ -98,14 +163,18 @@
       >
         Github
       </a>
-      <!--  -->
 
-      <a class="ui blue label">
+      <div class="ui blue label">
         Token Issued
         <div class="detail" id="count">N/A</div>
-      </a>
+      </div>
 
-      <button class="ui label red button mini" id="deleteAllToken">
+      <button
+        class="ui label red button mini"
+        id="deleteAllToken"
+        type="button"
+        on:click={handleDeleteAllTokens}
+      >
         Delete All
       </button>
     </div>
