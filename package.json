@@ -1,4 +1,5 @@
 {
+  "name": "dev-auth-extension",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
