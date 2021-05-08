@@ -12,31 +12,49 @@
     getTokens,
     saveToken,
     deleteAllSavedTokens,
+    editToken,
+    deleteToken,
   } from "./services/localStorage";
   import { currentToken, savedTokens } from "./store";
 
   let storedTokens: Array<Token>;
   let currentActiveToken: string = "";
   let isCopied: boolean = false;
-
-  savedTokens.subscribe((tokens) => (storedTokens = tokens));
-  currentToken.subscribe((token) => (currentActiveToken = token));
-
   let isFormShown: boolean = false;
+  let editId: number | null;
+  let clickedId: number | null = null;
 
   const INITIAL_USER_STATE: User = {
     name: "",
     token: "",
   };
 
+  savedTokens.subscribe((tokens) => (storedTokens = tokens));
+  currentToken.subscribe((token) => (currentActiveToken = token));
+
   const form = writable(INITIAL_USER_STATE);
 
   const toggleForm = () => {
     isFormShown = !isFormShown;
+
+    if (!isFormShown) {
+      resetForm();
+      setEditId(null);
+    }
   };
+
+  const setEditId = (id: number | null) => (editId = id);
 
   const resetForm = () => {
     form.set(INITIAL_USER_STATE);
+  };
+
+  const reset = () => {
+    toggleForm();
+
+    resetForm();
+
+    setEditId(null);
   };
 
   const handleFormSubmit = () => {
@@ -48,9 +66,7 @@
       id: storedTokens.length + 1,
     });
 
-    toggleForm();
-
-    resetForm();
+    reset();
   };
 
   onMount(() => {
@@ -58,8 +74,6 @@
 
     getCurrentToken();
   });
-
-  let clickedId: number | null = null;
 
   const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
     clickedId = id;
@@ -82,6 +96,28 @@
     setTimeout(() => {
       isCopied = false;
     }, 1000);
+  };
+
+  const handleEditToken = (token: Token) => {
+    form.set({ token: token.refreshToken, name: token.username });
+
+    if (!isFormShown) {
+      toggleForm();
+    }
+
+    setEditId(token.id);
+  };
+
+  const handleFormEdit = (id: number) => {
+    editToken(id, $form.token, $form.name);
+
+    reset();
+  };
+
+  const handleTokenDelete = (id: number) => {
+    deleteToken(id);
+
+    reset();
   };
 </script>
 
@@ -106,7 +142,7 @@
 
     <div class="ui middle aligned divided list" id="userList">
       {#each storedTokens as token}
-        <div class="item">
+        <div class="item" on:dblclick={() => handleEditToken(token)}>
           <div class="right floated content">
             {#if clickedId == token.id}
               <button class="ui loading button small m-0">Loading</button>
@@ -175,11 +211,24 @@
           >
             Cancel
           </button>
-          <button
-            class="ui primary button"
-            type="button"
-            on:click={handleFormSubmit}>Add</button
-          >
+          {#if editId}
+            <button
+              class="ui red button"
+              type="button"
+              on:click={() => handleTokenDelete(editId)}>Delete</button
+            >
+            <button
+              class="ui primary button"
+              type="button"
+              on:click={() => handleFormEdit(editId)}>Edit</button
+            >
+          {:else}
+            <button
+              class="ui primary button"
+              type="button"
+              on:click={handleFormSubmit}>Add</button
+            >
+          {/if}
         </form>
         <div class="ui divider" />
       </div>

@@ -49,3 +49,33 @@ export const deleteAllSavedTokens = () => {
     savedTokens.set(INITIAL_TOKENS);
   });
 };
+
+export const editToken = (id: number, token: string, username: string) => {
+  browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+    const currentValue: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+    const newValue = currentValue.map((cv) =>
+      cv.id === id
+        ? {
+            ...cv,
+            refreshToken: token,
+            username: username,
+            accessToken: token,
+            isActive: true,
+          }
+        : { ...cv }
+    );
+
+    setTokenInLocalStorage(newValue);
+  });
+};
+
+export const deleteToken = (id: number) => {
+  browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+    const currentValue: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+    const newValue = currentValue.filter((cv) => cv.id !== id);
+
+    setTokenInLocalStorage(newValue);
+  });
+};
