@@ -2,13 +2,8 @@ import type { Token } from "./../types/common.d";
 import { writable } from "svelte/store";
 import browser from "./browserExtension";
 
-const INITIAL_TOKENS: Array<Token> = [];
-
-export const savedTokens = writable(INITIAL_TOKENS);
-
-interface LocalStorageToken {
-  vyagutaDevAuthToken: Array<Token>;
-}
+import { savedTokens } from "../store";
+import { INITIAL_TOKENS } from "../constants/common";
 
 export const setTokenInLocalStorage = (tokens: Array<Token>) => {
   browser.storage.local.set({ vyagutaDevAuthToken: tokens }, function () {
@@ -46,7 +41,7 @@ export const deleteAllSavedTokens = () => {
     const error = chrome.runtime.lastError;
 
     if (error) {
-      console.log(error);
+      console.error(error);
 
       return;
     }

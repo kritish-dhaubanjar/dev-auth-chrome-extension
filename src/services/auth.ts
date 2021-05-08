@@ -1,5 +1,5 @@
+import { currentToken } from "./../store";
 import type { Token } from "src/types/common";
-import { dataset_dev } from "svelte/internal";
 import browser from "./browserExtension";
 import { setTokenInLocalStorage } from "./localStorage";
 
@@ -58,6 +58,25 @@ export const auth = ({
     .then((res) => res.json())
     .then(({ data }) => {
       setAccessToken(data);
+
+      browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+        const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+        const activeTokens = savedTokens.map((token) => {
+          return token.refreshToken === refreshToken
+            ? {
+                ...token,
+                refreshToken: data.refreshToken,
+                accessToken: data.accessToken,
+              }
+            : { ...token };
+        });
+
+        setTokenInLocalStorage(activeTokens);
+      });
+
+      currentToken.set(data.refreshToken);
+
       return data;
     })
     .catch((err) => {
@@ -73,4 +92,21 @@ export const auth = ({
         setTokenInLocalStorage(activeTokens);
       });
     });
+};
+
+export const getCurrentToken = (tokenName = "refreshToken") => {
+  browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+    const currentTab = tabs[0];
+
+    const currentUrl = currentTab.url;
+
+    VALID_URLS.forEach((url) => {
+      if (currentUrl?.includes(url)) {
+        browser.cookies.get({ url, name: tokenName }, (cookie) => {
+          const value = cookie?.value || "";
+          currentToken.set(value);
+        });
+      }
+    });
+  });
 };

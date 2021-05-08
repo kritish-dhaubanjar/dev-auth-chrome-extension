@@ -1,21 +1,26 @@
 <!-- App.svelte -->
 <script lang="typescript">
+  import CopyClipBoard from "./components/common/Clipboard.svelte";
+
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
   import type { Token, User } from "./types/common";
 
-  import { auth } from "./services/auth";
+  import { auth, getCurrentToken } from "./services/auth";
   import {
     getTokens,
     saveToken,
-    savedTokens,
     deleteAllSavedTokens,
   } from "./services/localStorage";
+  import { currentToken, savedTokens } from "./store";
 
   let storedTokens: Array<Token>;
+  let currentActiveToken: string = "";
+  let isCopied: boolean = false;
 
   savedTokens.subscribe((tokens) => (storedTokens = tokens));
+  currentToken.subscribe((token) => (currentActiveToken = token));
 
   let isFormShown: boolean = false;
 
@@ -50,6 +55,8 @@
 
   onMount(() => {
     getTokens();
+
+    getCurrentToken();
   });
 
   let clickedId: number | null = null;
@@ -61,6 +68,20 @@
 
   const handleDeleteAllTokens = () => {
     deleteAllSavedTokens();
+  };
+
+  const handleTokenCopy = () => {
+    const app = new CopyClipBoard({
+      target: document.getElementById("clipboard"),
+      props: { name: currentActiveToken },
+    });
+    app.$destroy();
+
+    isCopied = true;
+
+    setTimeout(() => {
+      isCopied = false;
+    }, 1000);
   };
 </script>
 
@@ -86,10 +107,13 @@
     <div class="ui middle aligned divided list" id="userList">
       {#each storedTokens as token}
         <div class="item">
-          <div class="right floated content" id={token.accessToken}>
+          <div class="right floated content">
             {#if clickedId == token.id}
               <button class="ui loading button small m-0">Loading</button>
             {:else}
+              {#if token.refreshToken === currentActiveToken}
+                <div class="ui green empty circular label" />
+              {/if}
               <button
                 class="ui button small m-0"
                 type="button"
@@ -112,8 +136,14 @@
       {/each}
     </div>
     <div class="ui fluid mini action input mb-12" id="clipboard">
-      <input type="text" value="" placeholder="accessToken appears here" />
-      <button class="ui mini teal button">Copy</button>
+      <input
+        type="text"
+        value={currentActiveToken}
+        placeholder="Token appears here"
+      />
+      <button class="ui mini teal button" on:click={handleTokenCopy}
+        >{isCopied ? "Copied" : "Copy"}</button
+      >
     </div>
 
     {#if isFormShown}
@@ -179,6 +209,8 @@
       </button>
     </div>
   </main>
+
+  <div id="clipboard" />
 </div>
 
 <style>
