@@ -3,9 +3,10 @@
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
-  import type { Token, User } from "./types/common";
+  import type { Token } from "./types/common";
 
   import { auth, getCurrentToken } from "./services/auth";
+  import { INITIAL_USER_STATE } from "./constants/common";
   import { getTotalTokenIssued } from "./services/firebase";
   import { currentToken, savedTokens, tokenIssued } from "./store";
   import CopyClipBoard from "./components/common/Clipboard.svelte";
@@ -24,11 +25,6 @@
   let editId: number | null;
   let clickedId: number | null = null;
   let totalTokenIssued: number = 0;
-
-  const INITIAL_USER_STATE: User = {
-    name: "",
-    token: "",
-  };
 
   savedTokens.subscribe((tokens) => (storedTokens = tokens));
   currentToken.subscribe((token) => (currentActiveToken = token));
