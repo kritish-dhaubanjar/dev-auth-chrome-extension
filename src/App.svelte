@@ -1,13 +1,14 @@
 <!-- App.svelte -->
 <script lang="typescript">
-  import CopyClipBoard from "./components/common/Clipboard.svelte";
-
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
   import type { Token, User } from "./types/common";
 
   import { auth, getCurrentToken } from "./services/auth";
+  import { getTotalTokenIssued } from "./services/firebase";
+  import { currentToken, savedTokens, tokenIssued } from "./store";
+  import CopyClipBoard from "./components/common/Clipboard.svelte";
   import {
     getTokens,
     saveToken,
@@ -15,7 +16,6 @@
     editToken,
     deleteToken,
   } from "./services/localStorage";
-  import { currentToken, savedTokens } from "./store";
 
   let storedTokens: Array<Token>;
   let currentActiveToken: string = "";
@@ -23,6 +23,7 @@
   let isFormShown: boolean = false;
   let editId: number | null;
   let clickedId: number | null = null;
+  let totalTokenIssued: number = 0;
 
   const INITIAL_USER_STATE: User = {
     name: "",
@@ -31,6 +32,7 @@
 
   savedTokens.subscribe((tokens) => (storedTokens = tokens));
   currentToken.subscribe((token) => (currentActiveToken = token));
+  tokenIssued.subscribe((count) => (totalTokenIssued = count));
 
   const form = writable(INITIAL_USER_STATE);
 
@@ -73,6 +75,8 @@
     getTokens();
 
     getCurrentToken();
+
+    getTotalTokenIssued();
   });
 
   const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
@@ -245,7 +249,7 @@
 
       <div class="ui blue label">
         Token Issued
-        <div class="detail" id="count">N/A</div>
+        <div class="detail" id="count">{totalTokenIssued || "N/A"}</div>
       </div>
 
       <button
