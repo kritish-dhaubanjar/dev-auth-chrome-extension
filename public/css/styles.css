@@ -1,6 +1,14 @@
 * {
   color: #454543;
 }
+html {
+  height: max-content !important;
+}
+
+body{
+  min-width: 332px !important;
+}
+
 main {
   padding: 16px;
 }
@@ -40,4 +48,16 @@ main {
 
 .pt-4{
   padding-top: 4px;
+}
+
+.me-4{
+  margin-right: 4px !important;
+}
+
+.ui.label > img{
+  width: 13px !important;
+  height: 13px !important;
+  position: relative;
+  top: -1px;
+  margin-right: 4px;
 }

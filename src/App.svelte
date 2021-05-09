@@ -143,12 +143,12 @@
     <div class="ui middle aligned divided list" id="userList">
       {#each storedTokens as token}
         <div class="item" on:dblclick={() => handleEditToken(token)}>
-          <div class="right floated content">
+          <div class="right floated content d-flex align-items-center">
             {#if clickedId == token.id}
               <button class="ui loading button small m-0">Loading</button>
             {:else}
               {#if token.refreshToken === currentActiveToken}
-                <div class="ui green empty circular label" />
+                <div class="ui green empty circular label me-4" />
               {/if}
               <button
                 class="ui button small m-0"
@@ -220,7 +220,7 @@
             <button
               class="ui primary button"
               type="button"
-              on:click={() => handleFormEdit(editId)}>Edit</button
+              on:click={() => handleFormEdit(editId)}>Save</button
             >
           {:else}
             <button
@@ -236,10 +236,11 @@
 
     <div class="ui labels">
       <a
-        class="ui label pink"
+        class="ui label black"
         href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension"
         target="_blank"
       >
+        <img src="./assets/github-32px.png" alt="Github" />
         Github
       </a>
 
