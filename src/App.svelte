@@ -119,10 +119,39 @@
 
     reset();
   };
+
+  let cursorLeft = 0;
+  let cursorRight = 0;
+
+  const handleMouseMove = (event: MouseEvent) => {
+    cursorLeft = event.clientX + 10;
+    cursorRight = event.clientY;
+  };
+
+  $: showComment = false;
+
+  const handleMouseEnter = () => {
+    showComment = true;
+  };
+
+  const handleMouseLeave = () => {
+    showComment = false;
+  };
+
+  $: cursorHelperText = `
+    left: ${cursorLeft}px;
+    top: ${cursorRight}px;
+  `;
 </script>
 
 <div class="App">
   <main>
+    <span
+      class="p-absolute z-100"
+      class:d-none={!showComment}
+      on:mouseenter
+      style={cursorHelperText}>Double click to edit</span
+    >
     <h4 class="ui header middle aligned list">
       <img
         src="./assets/patrick.png"
@@ -160,7 +189,12 @@
               >
             {/if}
           </div>
-          <div class="d-flex align-items-center pt-4">
+          <div
+            class="d-flex align-items-center pt-4"
+            on:mousemove={handleMouseMove}
+            on:mouseenter={handleMouseEnter}
+            on:mouseleave={handleMouseLeave}
+          >
             <img
               class="ui avatar image"
               src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
@@ -263,5 +297,7 @@
 </div>
 
 <style>
-  /* css will go here */
+  .p-absolute {
+    position: absolute;
+  }
 </style>
