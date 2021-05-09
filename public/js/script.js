@@ -20,6 +20,8 @@ const urls = [
   "https://dev.vyaguta.lftechnology.com",
 ];
 
+let CURRENT_ACCESS_TOKEN = "";
+
 deleteAllToken.addEventListener("click", function () {
   chrome.storage.local.clear(function () {
     var error = chrome.runtime.lastError;
@@ -67,7 +69,7 @@ tokenForm.addEventListener("submit", (e) => {
   const token = formData.get("token").trim();
 
   if (!username || !token) {
-    local.log("Please enter both username and token");
+    log("Please enter both username and token");
     return;
   }
 
@@ -111,7 +113,7 @@ const setToken = ({ accessToken, refreshToken }) => {
 
   const code = `window.location.reload();`;
   chrome.tabs.executeScript(null, { code: code });
-  window.close();
+  // window.close();
 };
 
 const addEventListener = (button, loading, token) => {
@@ -119,6 +121,8 @@ const addEventListener = (button, loading, token) => {
     log("Clicked");
     button.classList = "ui button small d-none";
     loading.classList = "ui loading button small";
+
+    log((button.innerHTML = "Authed"));
 
     fetch(
       `https://dev.vyaguta.lftechnology.com/api/auth/authorize?clientId=lms&token=${token}`,
@@ -137,6 +141,8 @@ const addEventListener = (button, loading, token) => {
             }),
           }
         );
+
+        console.log(data);
 
         setToken(data);
       })
@@ -176,5 +182,18 @@ fetch("https://vyaguta-extension-default-rtdb.firebaseio.com/requests.json")
     requests = Object.keys(data).length;
     count.innerHTML = requests;
   });
+
+(function currentAccessToken() {
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+    const currentUrl = tabs[0].url;
+
+    urls.forEach((url) => {
+      currentUrl.includes(url) &&
+        chrome.cookies.get({ url, name: "accessToken" }, ({ value }) => {
+          CURRENT_ACCESS_TOKEN = value;
+        });
+    });
+  });
+})();
 
 updateList();
