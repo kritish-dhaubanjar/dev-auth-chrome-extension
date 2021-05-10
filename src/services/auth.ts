@@ -1,6 +1,7 @@
+import browser from "./browserExtension";
 import { currentToken } from "./../store";
 import type { Token } from "src/types/common";
-import browser from "./browserExtension";
+import { updateTokenIssued } from "./firebase";
 import { setTokenInLocalStorage } from "./localStorage";
 
 const VALID_URLS = [
@@ -36,6 +37,8 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
             value: accessToken,
           },
           () => {
+            updateTokenIssued();
+
             browser.tabs.executeScript(currentTabId, {
               code: `window.location.reload()`,
             });

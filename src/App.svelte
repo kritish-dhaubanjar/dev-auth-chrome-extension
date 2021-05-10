@@ -1,13 +1,15 @@
 <!-- App.svelte -->
 <script lang="typescript">
-  import CopyClipBoard from "./components/common/Clipboard.svelte";
-
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
-  import type { Token, User } from "./types/common";
+  import type { Token } from "./types/common";
 
   import { auth, getCurrentToken } from "./services/auth";
+  import { INITIAL_USER_STATE } from "./constants/common";
+  import { getTotalTokenIssued } from "./services/firebase";
+  import { currentToken, savedTokens, tokenIssued } from "./store";
+  import CopyClipBoard from "./components/common/Clipboard.svelte";
   import {
     getTokens,
     saveToken,
@@ -15,7 +17,6 @@
     editToken,
     deleteToken,
   } from "./services/localStorage";
-  import { currentToken, savedTokens } from "./store";
 
   let storedTokens: Array<Token>;
   let currentActiveToken: string = "";
@@ -23,14 +24,11 @@
   let isFormShown: boolean = false;
   let editId: number | null;
   let clickedId: number | null = null;
-
-  const INITIAL_USER_STATE: User = {
-    name: "",
-    token: "",
-  };
+  let totalTokenIssued: number = 0;
 
   savedTokens.subscribe((tokens) => (storedTokens = tokens));
   currentToken.subscribe((token) => (currentActiveToken = token));
+  tokenIssued.subscribe((count) => (totalTokenIssued = count));
 
   const form = writable(INITIAL_USER_STATE);
 
@@ -73,6 +71,8 @@
     getTokens();
 
     getCurrentToken();
+
+    getTotalTokenIssued();
   });
 
   const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
@@ -119,10 +119,39 @@
 
     reset();
   };
+
+  let cursorLeft = 0;
+  let cursorRight = 0;
+
+  const handleMouseMove = (event: MouseEvent) => {
+    cursorLeft = event.clientX + 10;
+    cursorRight = event.clientY;
+  };
+
+  $: showComment = false;
+
+  const handleMouseEnter = () => {
+    showComment = true;
+  };
+
+  const handleMouseLeave = () => {
+    showComment = false;
+  };
+
+  $: cursorHelperText = `
+    left: ${cursorLeft}px;
+    top: ${cursorRight}px;
+  `;
 </script>
 
 <div class="App">
   <main>
+    <span
+      class="p-absolute z-100"
+      class:d-none={!showComment}
+      on:mouseenter
+      style={cursorHelperText}>Double click to edit</span
+    >
     <h4 class="ui header middle aligned list">
       <img
         src="./assets/patrick.png"
@@ -160,7 +189,12 @@
               >
             {/if}
           </div>
-          <div class="d-flex align-items-center pt-4">
+          <div
+            class="d-flex align-items-center pt-4"
+            on:mousemove={handleMouseMove}
+            on:mouseenter={handleMouseEnter}
+            on:mouseleave={handleMouseLeave}
+          >
             <img
               class="ui avatar image"
               src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
@@ -246,7 +280,7 @@
 
       <div class="ui blue label">
         Token Issued
-        <div class="detail" id="count">N/A</div>
+        <div class="detail" id="count">{totalTokenIssued || "N/A"}</div>
       </div>
 
       <button
@@ -264,5 +298,7 @@
 </div>
 
 <style>
-  /* css will go here */
+  .p-absolute {
+    position: absolute;
+  }
 </style>
