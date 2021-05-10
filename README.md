@@ -6,18 +6,41 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 
 #### Preview
 
-![image](https://user-images.githubusercontent.com/25634165/115243163-5885a880-a142-11eb-8649-c61ecae6f28a.png)
+![vyaguta_dev_auth](https://user-images.githubusercontent.com/25634165/117668047-450bb180-b1c5-11eb-804c-865b63596259.png)
 
 #### Usage
 
-![dev-auth-extension](https://user-images.githubusercontent.com/25634165/114313756-843bd980-9b17-11eb-9412-87ffbd5b0c50.gif)
+![vyaguta_dev_auth](https://user-images.githubusercontent.com/25634165/117668727-ef83d480-b1c5-11eb-9f92-f4cf018be4de.gif)
+
+## Development setup
+
+```shell
+git clone https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension.git
+
+cd dev-auth-chrome-extension
+
+yarn install
+
+yarn build:watch
+```
+#### Firefox
+1. Open the `about:debugging` page, click "This Firefox" (in newer versions of Firefox).
+2. Click `Load Temporary Add-on` and select any file in your extension's directory (`dev-auth-chrome-extension/build`). <sup>[Read More](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension)</sup>
+
+#### Chrome
+1. Open the Extension Management page by navigating to `chrome://extensions`.
+2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
+3. Click the `Load unpacked` button and select the extension directory (`dev-auth-chrome-extension/build`). <sup>[Read More](https://developer.chrome.com/docs/extensions/mv3/getstarted/)</sup>
+
+
 
 ## Contributors ✨
 
-Thanks goes to this wonderful person:
+Thanks goes to these wonderful people:
 
 <table>
   <tr>
     <td align="center"><a href="https://github.com/maskeynihal"><img src="https://avatars.githubusercontent.com/u/26411488?v=4" width="100px;" alt=""/><br /><sub><b>Nihal Maskey</b></sub></a><br /><a href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/commits?author=maskeynihal" title="Commits">📖</a></td>
+    <td align="center"><a href="https://github.com/RikLakhe"><img src="https://avatars.githubusercontent.com/u/25451595?v=4" width="100px;" alt=""/><br /><sub><b>Rikesh Lal Shrestha</b></sub></a><br /><a href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/issues?q=author%3ARikLakhe" title="Bug Reports">🐛</a></td>
   </tr>
 </table>
