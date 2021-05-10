@@ -32,6 +32,19 @@ yarn build:watch
 2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
 3. Click the `Load unpacked` button and select the extension directory (`dev-auth-chrome-extension/build`). <sup>[Read More](https://developer.chrome.com/docs/extensions/mv3/getstarted/)</sup>
 
+## Release History
+
+* 1.0.0
+    * FIX: Crash when symbols are added to name
+    * ADD: Edit/delete individual users
+    * ADD: Indicator for current & expired tokens
+* 0.2.0
+    * The first proper pre-release
+    * ADD: Form to add multiple users
+    * ADD: Clipboard to copy accessToken
+* 0.1.0
+    * Work in progress
+ 
 
 
 ## Contributors ✨
