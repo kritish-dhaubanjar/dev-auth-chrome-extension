@@ -54,6 +54,10 @@ main {
   margin-right: 4px !important;
 }
 
+.mt-0{
+  margin-top: 0 !important
+}
+
 .ui.label > img{
   width: 13px !important;
   height: 13px !important;

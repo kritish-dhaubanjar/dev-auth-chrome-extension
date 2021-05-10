@@ -147,12 +147,12 @@
 <div class="App">
   <main>
     <span
-      class="p-absolute z-100"
+      class="p-absolute z-100 ui purple horizontal label"
       class:d-none={!showComment}
       on:mouseenter
       style={cursorHelperText}>Double click to edit</span
     >
-    <h4 class="ui header middle aligned list">
+    <h4 class="ui header middle aligned list mt-0">
       <img
         src="./assets/patrick.png"
         class="ui circular image small"
