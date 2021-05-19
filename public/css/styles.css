@@ -5,7 +5,7 @@ html {
   height: max-content !important;
 }
 
-body{
+body {
   min-width: 332px !important;
 }
 
@@ -26,7 +26,7 @@ main {
   display: flex;
 }
 
-.align-items-center{
+.align-items-center {
   align-items: center;
 }
 
@@ -38,30 +38,39 @@ main {
   padding-bottom: 8px !important;
 }
 
-.mb-12{
+.mb-12 {
   margin-bottom: 12px !important;
 }
 
-.m-0{
+.m-0 {
   margin: 0 !important;
 }
 
-.pt-4{
+.pt-4 {
   padding-top: 4px;
 }
 
-.me-4{
+.me-4 {
   margin-right: 4px !important;
 }
 
-.mt-0{
-  margin-top: 0 !important
+.mt-0 {
+  margin-top: 0 !important;
 }
 
-.ui.label > img{
+.ui.label > img {
   width: 13px !important;
   height: 13px !important;
   position: relative;
   top: -1px;
   margin-right: 4px;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ui.labels > .label {
+  margin: 0;
 }

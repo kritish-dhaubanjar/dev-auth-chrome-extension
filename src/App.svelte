@@ -7,7 +7,6 @@
 
   import { auth, getCurrentToken } from "./services/auth";
   import { INITIAL_USER_STATE } from "./constants/common";
-  import { getTotalTokenIssued } from "./services/firebase";
   import { currentToken, savedTokens, tokenIssued } from "./store";
   import CopyClipBoard from "./components/common/Clipboard.svelte";
   import {
@@ -71,8 +70,6 @@
     getTokens();
 
     getCurrentToken();
-
-    getTotalTokenIssued();
   });
 
   const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
@@ -268,7 +265,7 @@
       </div>
     {/if}
 
-    <div class="ui labels">
+    <div class="ui labels flex-space-between">
       <a
         class="ui label black"
         href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension"
@@ -278,10 +275,16 @@
         Github
       </a>
 
-      <div class="ui blue label">
-        Token Issued
-        <div class="detail" id="count">{totalTokenIssued || "N/A"}</div>
-      </div>
+      <a
+        class="ui blue label"
+        href="https://kritish-dhaubanjar.github.io/dev-auth-chrome-extension/"
+        target="_blank"
+      >
+        <img
+          src="https://img.icons8.com/android/24/ffffff/link.png"
+          alt="link"
+        />Visit Website
+      </a>
 
       <button
         class="ui label red button mini"
