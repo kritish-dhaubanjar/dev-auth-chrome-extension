@@ -55,7 +55,7 @@ Thanks goes to these wonderful people:
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/maskeynihal"><img src="https://avatars.githubusercontent.com/u/26411488?v=4" width="100px;" alt=""/><br /><sub><b>Nihal Maskey</b></sub></a><br /><a href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/commits?author=maskeynihal" title="Commits">📖</a></td>
+    <td align="center"><a href="https://github.com/maskeynihal"><img src="https://avatars.githubusercontent.com/u/26411488?v=4" width="100px;" alt=""/><br /><sub><b>Nihal Maskey</b></sub></a><br /><a href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/commits?author=maskeynihal" title="Commits">📖</a><a href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/issues?q=author%3Amaskeynihal" title="Bug Reports">🐛</a></td>
     <td align="center"><a href="https://github.com/RikLakhe"><img src="https://avatars.githubusercontent.com/u/25451595?v=4" width="100px;" alt=""/><br /><sub><b>Rikesh Lal Shrestha</b></sub></a><br /><a href="https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/issues?q=author%3ARikLakhe" title="Bug Reports">🐛</a></td>
   </tr>
 </table>
