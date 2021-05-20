@@ -34,7 +34,9 @@ yarn build:watch
 
 ## Release History
 
-* 1.0.0
+* 1.0.2
+    * REMOVE: Token Issued from the footer
+* 1.0.1
     * FIX: Crash when symbols are added to name
     * ADD: Edit/delete individual users
     * ADD: Indicator for current & expired tokens
