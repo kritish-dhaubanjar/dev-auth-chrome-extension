@@ -8,6 +8,19 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 
 ![vyaguta_dev_auth](https://user-images.githubusercontent.com/25634165/117668047-450bb180-b1c5-11eb-804c-865b63596259.png)
 
+## Installation
+
+#### Firefox
+1. Download [dev_auth_extension-1.0.2-fx.xpi](https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/releases/download/v1.0.2/dev_auth_extension-1.0.2-fx.xpi)
+2. Open the Extension Management page by navigating to `about:addons`.
+3. Drag and drop `dev_auth_extension-1.0.2-fx.xpi` into `about:addons` page.
+
+#### Chrome
+1. Download [dev_auth_extension-1.0.2.zip](https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/releases/download/v1.0.2/dev_auth_extension-1.0.2.zip)
+1. Open the Extension Management page by navigating to `chrome://extensions`.
+2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
+3. Drag and drop `dev_auth_extension-1.0.2.zip` into `chrome://extensions` page.
+
 #### Usage
 
 ![vyaguta_dev_auth](https://user-images.githubusercontent.com/25634165/117668727-ef83d480-b1c5-11eb-9f92-f4cf018be4de.gif)
