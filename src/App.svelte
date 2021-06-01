@@ -106,6 +106,8 @@
   };
 
   const handleEditToken = (token: Token) => {
+    formView = FORM_VIEW.ADD_USER;
+
     form.set({ token: token.refreshToken, name: token.username });
 
     if (!isFormShown) {
