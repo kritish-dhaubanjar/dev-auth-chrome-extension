@@ -28,6 +28,17 @@ export const saveToken = (token: Token) => {
   });
 };
 
+export const saveTokens = (tokens: Array<Token>) => {
+  browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+    const currentValue: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+    setTokenInLocalStorage([
+      ...currentValue,
+      ...tokens
+    ]);
+  });
+};
+
 export const getTokens = () => {
   browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
     const currentValue: Array<Token> = result?.vyagutaDevAuthToken ?? [];
