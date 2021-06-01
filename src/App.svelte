@@ -188,7 +188,7 @@
     const a: HTMLElement = document.createElement("a");
 
     a.setAttribute("href", data);
-    a.setAttribute("download", "scene.json");
+    a.setAttribute("download", "vyagutadevauth.json");
     a.click();
   };
 
