@@ -6,7 +6,7 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 
 #### Preview
 
-![vyaguta_dev_auth](https://user-images.githubusercontent.com/25634165/117668047-450bb180-b1c5-11eb-804c-865b63596259.png)
+![dev_auth_extension_add_user](https://user-images.githubusercontent.com/25634165/120756229-b7ef1a80-c52e-11eb-84c7-8faa8d027a93.png)
 
 ## Installation
 
@@ -46,7 +46,8 @@ yarn build:watch
 3. Click the `Load unpacked` button and select the extension directory (`dev-auth-chrome-extension/build`). <sup>[Read More](https://developer.chrome.com/docs/extensions/mv3/getstarted/)</sup>
 
 ## Release History
-
+* 1.1.0
+    * ADD: Quick JSON Import/Export for Tokens
 * 1.0.2
     * REMOVE: Token Issued from the footer
 * 1.0.1
