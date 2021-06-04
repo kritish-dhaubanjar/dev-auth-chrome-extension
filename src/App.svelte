@@ -3,15 +3,21 @@
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
-  import type { Token } from "./types/common";
+  import type { Token, User } from "./types/common";
 
   import { auth, getCurrentToken } from "./services/auth";
-  import { INITIAL_USER_STATE } from "./constants/common";
   import { currentToken, savedTokens, tokenIssued } from "./store";
   import CopyClipBoard from "./components/common/Clipboard.svelte";
   import {
+    INITIAL_USER_STATE,
+    FORM_VIEW,
+    JSON_PLACEHOLDER,
+  } from "./constants/common";
+
+  import {
     getTokens,
     saveToken,
+    saveTokens,
     deleteAllSavedTokens,
     editToken,
     deleteToken,
@@ -24,6 +30,9 @@
   let editId: number | null;
   let clickedId: number | null = null;
   let totalTokenIssued: number = 0;
+
+  let formView: string = FORM_VIEW.ADD_USER;
+  let json: string = "";
 
   savedTokens.subscribe((tokens) => (storedTokens = tokens));
   currentToken.subscribe((token) => (currentActiveToken = token));
@@ -44,6 +53,7 @@
 
   const resetForm = () => {
     form.set(INITIAL_USER_STATE);
+    json = "";
   };
 
   const reset = () => {
@@ -96,6 +106,8 @@
   };
 
   const handleEditToken = (token: Token) => {
+    formView = FORM_VIEW.ADD_USER;
+
     form.set({ token: token.refreshToken, name: token.username });
 
     if (!isFormShown) {
@@ -117,6 +129,10 @@
     reset();
   };
 
+  const toggleFormView = (view: string) => {
+    formView = view;
+  };
+
   let cursorLeft = 0;
   let cursorRight = 0;
 
@@ -133,6 +149,47 @@
 
   const handleMouseLeave = () => {
     showComment = false;
+  };
+
+  const handleImport = () => {
+    try {
+      const users: Array<User> = JSON.parse(json);
+      const tokens: Array<Token> = [];
+
+      let id = storedTokens.length + 1;
+
+      users.forEach((user) => {
+        tokens.push({
+          username: user.name,
+          accessToken: user.token,
+          refreshToken: user.token,
+          isActive: true,
+          id: id,
+        });
+        id++;
+      });
+
+      saveTokens(tokens);
+
+      reset();
+    } catch (error) {}
+  };
+
+  const handleExport = () => {
+    const users = storedTokens.map((token) => ({
+      name: token.username,
+      token: token.accessToken,
+    }));
+
+    const data =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(users));
+
+    const a: HTMLElement = document.createElement("a");
+
+    a.setAttribute("href", data);
+    a.setAttribute("download", "vyagutadevauth.json");
+    a.click();
   };
 
   $: cursorHelperText = `
@@ -214,53 +271,107 @@
     </div>
 
     {#if isFormShown}
+      <div class="ui secondary pointing menu">
+        <a
+          class="item"
+          href="#"
+          on:click={() => toggleFormView(FORM_VIEW.ADD_USER)}
+          class:active={formView === FORM_VIEW.ADD_USER}
+        >
+          Add User
+        </a>
+        <a
+          class="item"
+          href="#"
+          on:click={() => toggleFormView(FORM_VIEW.IMPORT)}
+          class:active={formView === FORM_VIEW.IMPORT}
+        >
+          Import
+        </a>
+      </div>
       <div class="item pb-8" id="tokenFormContainer">
-        <form class="ui form" id="tokenForm">
-          <div class="field">
-            <label for="username">Username</label>
-            <input
-              name="username"
-              type="text"
-              id="username"
-              bind:value={$form.name}
-            />
-          </div>
-          <div class="field">
-            <label for="token">Token</label>
-            <textarea
-              name="token"
-              rows="2"
-              id="token"
-              bind:value={$form.token}
-            />
-          </div>
-          <button
-            class="ui button"
-            type="button"
-            id="removeForm"
-            on:click={toggleForm}
-          >
-            Cancel
-          </button>
-          {#if editId}
+        {#if formView === FORM_VIEW.ADD_USER}
+          <form class="ui form" id="tokenForm">
+            <div class="field">
+              <label for="username">Username</label>
+              <input
+                name="username"
+                type="text"
+                id="username"
+                bind:value={$form.name}
+              />
+            </div>
+            <div class="field">
+              <label for="token">Token</label>
+              <textarea
+                name="token"
+                rows="2"
+                id="token"
+                bind:value={$form.token}
+              />
+            </div>
             <button
-              class="ui red button"
+              class="ui button"
               type="button"
-              on:click={() => handleTokenDelete(editId)}>Delete</button
+              id="removeForm"
+              on:click={toggleForm}
             >
+              Cancel
+            </button>
+            {#if editId}
+              <button
+                class="ui red button"
+                type="button"
+                on:click={() => handleTokenDelete(editId)}>Delete</button
+              >
+              <button
+                class="ui primary button"
+                type="button"
+                on:click={() => handleFormEdit(editId)}>Save</button
+              >
+            {:else}
+              <button
+                class="ui primary button"
+                type="button"
+                on:click={handleFormSubmit}>Add</button
+              >
+            {/if}
+          </form>
+
+          <!--  -->
+        {:else}
+          <form class="ui form" id="importForm">
+            <div class="field">
+              <label for="json">JSON</label>
+              <textarea
+                name="json"
+                rows="6"
+                id="json"
+                bind:value={json}
+                placeholder={JSON_PLACEHOLDER}
+              />
+            </div>
+            <button
+              class="ui button"
+              type="button"
+              id="removeForm"
+              on:click={toggleForm}
+            >
+              Cancel
+            </button>
             <button
               class="ui primary button"
               type="button"
-              on:click={() => handleFormEdit(editId)}>Save</button
+              on:click={handleImport}>Import</button
             >
-          {:else}
+
             <button
-              class="ui primary button"
+              class="ui teal button right floated"
               type="button"
-              on:click={handleFormSubmit}>Add</button
+              on:click={handleExport}>Export</button
             >
-          {/if}
-        </form>
+          </form>
+        {/if}
         <div class="ui divider" />
       </div>
     {/if}
@@ -280,10 +391,7 @@
         href="https://kritish-dhaubanjar.github.io/dev-auth-chrome-extension/"
         target="_blank"
       >
-        <img
-          src="https://img.icons8.com/android/24/ffffff/link.png"
-          alt="link"
-        />Visit Website
+        <img src="./assets/link.png" alt="link" />Visit Website
       </a>
 
       <button
