@@ -23,6 +23,7 @@
     "http://localhost/",
     "http://127.0.0.1/",
     "*://dev.vyaguta.lftechnology.com/",
+    "*://uat.vyaguta.lftechnology.com/",
     "storage"
   ]
 }
