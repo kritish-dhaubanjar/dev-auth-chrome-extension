@@ -8,6 +8,7 @@ const VALID_URLS = [
   "http://localhost",
   "http://127.0.0.1",
   "https://dev.vyaguta.lftechnology.com",
+  "https://uat.vyaguta.lftechnology.com",
 ];
 
 interface OnlyToken {
