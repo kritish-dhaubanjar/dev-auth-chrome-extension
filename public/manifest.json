@@ -24,6 +24,8 @@
     "http://127.0.0.1/",
     "*://dev.vyaguta.lftechnology.com/",
     "*://uat.vyaguta.lftechnology.com/",
+    "*://qa.vyaguta.lftechnology.com/",
+    "*://*.vyaguta.lftechnology.com/",
     "storage"
   ]
 }
