@@ -74,3 +74,20 @@ main {
 .ui.labels > .label {
   margin: 0;
 }
+
+.ui.slider.checkbox .box:after,
+.ui.slider.checkbox label:after {
+  z-index: 1;
+}
+
+.indicator{
+  left: -12px;
+  bottom: -8px;
+  min-width: 8px !important;
+  min-height: 8px !important;
+  position: relative;
+}
+
+.ui.label.indicator{
+  border: 2px solid #fff !important;
+}

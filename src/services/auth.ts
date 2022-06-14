@@ -4,17 +4,13 @@ import type { Token } from "src/types/common";
 import { updateTokenIssued } from "./firebase";
 import { setTokenInLocalStorage } from "./localStorage";
 
-const VALID_URLS = [
-  "http://localhost",
-  "http://127.0.0.1",
-  "https://dev.vyaguta.lftechnology.com",
-  "https://uat.vyaguta.lftechnology.com",
-  "https://qa.vyaguta.lftechnology.com",
-];
+const VALID_URLS = ["http://localhost", "http://127.0.0.1", "lftechnology.com"];
+const PRODUCTION_URL = "https://vyaguta.lftechnology.com";
 
 interface OnlyToken {
   accessToken: string;
   refreshToken: string;
+  shouldRefresh?: boolean;
 }
 
 const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
@@ -22,19 +18,27 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
     const currentTab = tabs[0];
     const currentTabId = currentTab.id || chrome.tabs.TAB_ID_NONE;
 
-    const currentUrl = currentTab.url;
+    const currentUrl = currentTab.url || "";
+
+    if (currentUrl.includes(PRODUCTION_URL)) {
+      return;
+    }
+
+    const { origin: currentOrigin } = new URL(currentUrl);
 
     VALID_URLS.forEach((url) => {
-      if (currentUrl?.includes(url)) {
+      const regex = new RegExp(url);
+
+      if (regex.test(currentUrl)) {
         browser.cookies.set({
-          url,
+          url: currentOrigin,
           name: "refreshToken",
           value: refreshToken,
         });
 
         browser.cookies.set(
           {
-            url,
+            url: currentOrigin,
             name: "accessToken",
             value: accessToken,
           },
@@ -56,13 +60,16 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
 export const auth = ({
   accessToken,
   refreshToken,
+  shouldRefresh,
 }: OnlyToken): Promise<Object> => {
   return fetch(
     `https://dev.vyaguta.lftechnology.com/api/auth/authorize?clientId=lms&token=${refreshToken}`
   )
     .then((res) => res.json())
     .then(({ data }) => {
-      setAccessToken(data);
+      const rToken = shouldRefresh ? data.refreshToken : refreshToken;
+
+      setAccessToken({ ...data, refreshToken: rToken });
 
       browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
         const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
@@ -71,7 +78,7 @@ export const auth = ({
           return token.refreshToken === refreshToken
             ? {
                 ...token,
-                refreshToken: data.refreshToken,
+                refreshToken: rToken,
                 accessToken: data.accessToken,
               }
             : { ...token };
@@ -80,7 +87,7 @@ export const auth = ({
         setTokenInLocalStorage(activeTokens);
       });
 
-      currentToken.set(data.refreshToken);
+      currentToken.set(rToken);
 
       return data;
     })
@@ -103,14 +110,25 @@ export const getCurrentToken = (tokenName = "refreshToken") => {
   browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
     const currentTab = tabs[0];
 
-    const currentUrl = currentTab.url;
+    const currentUrl = currentTab.url || "";
+
+    if (currentUrl.includes(PRODUCTION_URL)) {
+      return;
+    }
+
+    const { origin: currentOrigin } = new URL(currentUrl);
 
     VALID_URLS.forEach((url) => {
-      if (currentUrl?.includes(url)) {
-        browser.cookies.get({ url, name: tokenName }, (cookie) => {
-          const value = cookie?.value || "";
-          currentToken.set(value);
-        });
+      const regex = new RegExp(url);
+
+      if (regex.test(currentUrl)) {
+        browser.cookies.get(
+          { url: currentOrigin, name: tokenName },
+          (cookie) => {
+            const value = cookie?.value || "";
+            currentToken.set(value);
+          }
+        );
       }
     });
   });

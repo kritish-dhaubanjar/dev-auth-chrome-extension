@@ -4,6 +4,7 @@ export interface Token {
   username: string;
   id: number;
   isActive: bool;
+  shouldRefresh?: boolean;
 }
 
 interface User {

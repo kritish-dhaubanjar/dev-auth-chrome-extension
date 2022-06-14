@@ -21,6 +21,7 @@
     deleteAllSavedTokens,
     editToken,
     deleteToken,
+updateToken,
   } from "./services/localStorage";
 
   let storedTokens: Array<Token>;
@@ -82,10 +83,14 @@
     getCurrentToken();
   });
 
-  const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
+  const handleAuth = ({ accessToken, refreshToken, id, shouldRefresh }: Token) => {
     clickedId = id;
-    auth({ refreshToken, accessToken }).finally(() => (clickedId = null));
+    auth({ refreshToken, accessToken, shouldRefresh }).finally(() => (clickedId = null));
   };
+
+  const toggleShouldRefreshToken = (token: Token) => {
+    updateToken(token.id, {...token, shouldRefresh: !token.shouldRefresh})
+  }
 
   const handleDeleteAllTokens = () => {
     deleteAllSavedTokens();
@@ -164,6 +169,7 @@
           accessToken: user.token,
           refreshToken: user.token,
           isActive: true,
+          shouldRefresh: false,
           id: id,
         });
         id++;
@@ -208,7 +214,7 @@
     >
     <h4 class="ui header middle aligned list mt-0">
       <img
-        src="./assets/patrick.png"
+        src="./assets/ribbyShield.png"
         class="ui circular image small"
         alt="User"
       />
@@ -222,53 +228,6 @@
         {!isFormShown ? "Add User" : "Cancel"}
       </button>
     </h4>
-
-    <div class="ui middle aligned divided list" id="userList">
-      {#each storedTokens as token}
-        <div class="item" on:dblclick={() => handleEditToken(token)}>
-          <div class="right floated content d-flex align-items-center">
-            {#if clickedId == token.id}
-              <button class="ui loading button small m-0">Loading</button>
-            {:else}
-              {#if token.refreshToken === currentActiveToken}
-                <div class="ui green empty circular label me-4" />
-              {/if}
-              <button
-                class="ui button small m-0"
-                type="button"
-                disabled={!token.isActive}
-                class:red={!token.isActive}
-                on:click={() => handleAuth(token)}
-                >{token.isActive ? "Auth" : "Expired"}</button
-              >
-            {/if}
-          </div>
-          <div
-            class="d-flex align-items-center pt-4"
-            on:mousemove={handleMouseMove}
-            on:mouseenter={handleMouseEnter}
-            on:mouseleave={handleMouseLeave}
-          >
-            <img
-              class="ui avatar image"
-              src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
-              alt={token.username}
-            />
-            <div class="content">{token.username}</div>
-          </div>
-        </div>
-      {/each}
-    </div>
-    <div class="ui fluid mini action input mb-12" id="clipboard">
-      <input
-        type="text"
-        value={currentActiveToken}
-        placeholder="Token appears here"
-      />
-      <button class="ui mini teal button" on:click={handleTokenCopy}
-        >{isCopied ? "Copied" : "Copy"}</button
-      >
-    </div>
 
     {#if isFormShown}
       <div class="ui secondary pointing menu">
@@ -375,6 +334,61 @@
         <div class="ui divider" />
       </div>
     {/if}
+
+    <div class="ui middle aligned divided list" id="userList">
+      {#each storedTokens as token}
+        <div class="item" on:dblclick={() => handleEditToken(token)}>
+          <div class="right floated content d-flex align-items-center">
+            {#if clickedId == token.id}
+              <button class="ui loading button small m-0">Loading</button>
+            {:else}
+              <div class="ui slider checkbox"  data-tooltip={`${token.shouldRefresh ? 'Don\'t Refresh': 'Refresh'} the token`}>
+                <input type="checkbox" name="public" on:click={() => toggleShouldRefreshToken(token)} checked={token.shouldRefresh}>
+                <label class="slider-tooltip"></label>
+              </div>
+              <button
+                class="ui button small m-0"
+                type="button"
+                disabled={!token.isActive}
+                class:red={!token.isActive}
+                on:click={() => handleAuth(token)}
+                >{token.isActive ? "Auth" : "Expired"}</button
+              >
+            {/if}
+          </div>
+          <div
+            class="d-flex align-items-center pt-4"
+            on:mousemove={handleMouseMove}
+            on:mouseenter={handleMouseEnter}
+            on:mouseleave={handleMouseLeave}
+          >
+            <img
+              class="ui avatar image"
+              src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
+              alt={token.username}
+            />
+            {#if token.refreshToken === currentActiveToken}
+              <span class="ui green empty circular label me-2 indicator" />
+            {:else}
+              <span class="ui empty circular label me-2 indicator" />
+            {/if}
+            <div class="content">{token.username}</div>
+          </div>
+        </div>
+      {/each}
+    </div>
+    <div class="ui fluid mini action input mb-12" id="clipboard">
+      <input
+        type="text"
+        value={currentActiveToken}
+        placeholder="Token appears here"
+      />
+      <button class="ui mini teal button" on:click={handleTokenCopy}
+        >{isCopied ? "Copied" : "Copy"}</button
+      >
+    </div>
+
+    
 
     <div class="ui labels flex-space-between">
       <a
