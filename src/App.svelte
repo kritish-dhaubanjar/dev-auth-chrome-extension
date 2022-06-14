@@ -223,53 +223,6 @@
       </button>
     </h4>
 
-    <div class="ui middle aligned divided list" id="userList">
-      {#each storedTokens as token}
-        <div class="item" on:dblclick={() => handleEditToken(token)}>
-          <div class="right floated content d-flex align-items-center">
-            {#if clickedId == token.id}
-              <button class="ui loading button small m-0">Loading</button>
-            {:else}
-              {#if token.refreshToken === currentActiveToken}
-                <div class="ui green empty circular label me-4" />
-              {/if}
-              <button
-                class="ui button small m-0"
-                type="button"
-                disabled={!token.isActive}
-                class:red={!token.isActive}
-                on:click={() => handleAuth(token)}
-                >{token.isActive ? "Auth" : "Expired"}</button
-              >
-            {/if}
-          </div>
-          <div
-            class="d-flex align-items-center pt-4"
-            on:mousemove={handleMouseMove}
-            on:mouseenter={handleMouseEnter}
-            on:mouseleave={handleMouseLeave}
-          >
-            <img
-              class="ui avatar image"
-              src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
-              alt={token.username}
-            />
-            <div class="content">{token.username}</div>
-          </div>
-        </div>
-      {/each}
-    </div>
-    <div class="ui fluid mini action input mb-12" id="clipboard">
-      <input
-        type="text"
-        value={currentActiveToken}
-        placeholder="Token appears here"
-      />
-      <button class="ui mini teal button" on:click={handleTokenCopy}
-        >{isCopied ? "Copied" : "Copy"}</button
-      >
-    </div>
-
     {#if isFormShown}
       <div class="ui secondary pointing menu">
         <a
@@ -375,6 +328,55 @@
         <div class="ui divider" />
       </div>
     {/if}
+
+    <div class="ui middle aligned divided list" id="userList">
+      {#each storedTokens as token}
+        <div class="item" on:dblclick={() => handleEditToken(token)}>
+          <div class="right floated content d-flex align-items-center">
+            {#if clickedId == token.id}
+              <button class="ui loading button small m-0">Loading</button>
+            {:else}
+              {#if token.refreshToken === currentActiveToken}
+                <div class="ui green empty circular label me-4" />
+              {/if}
+              <button
+                class="ui button small m-0"
+                type="button"
+                disabled={!token.isActive}
+                class:red={!token.isActive}
+                on:click={() => handleAuth(token)}
+                >{token.isActive ? "Auth" : "Expired"}</button
+              >
+            {/if}
+          </div>
+          <div
+            class="d-flex align-items-center pt-4"
+            on:mousemove={handleMouseMove}
+            on:mouseenter={handleMouseEnter}
+            on:mouseleave={handleMouseLeave}
+          >
+            <img
+              class="ui avatar image"
+              src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
+              alt={token.username}
+            />
+            <div class="content">{token.username}</div>
+          </div>
+        </div>
+      {/each}
+    </div>
+    <div class="ui fluid mini action input mb-12" id="clipboard">
+      <input
+        type="text"
+        value={currentActiveToken}
+        placeholder="Token appears here"
+      />
+      <button class="ui mini teal button" on:click={handleTokenCopy}
+        >{isCopied ? "Copied" : "Copy"}</button
+      >
+    </div>
+
+    
 
     <div class="ui labels flex-space-between">
       <a
