@@ -367,10 +367,12 @@ updateToken,
               src="https://ui-avatars.com/api/?name={token.username}&background=random&size=256"
               alt={token.username}
             />
-            <div class="content">{token.username}</div>
             {#if token.refreshToken === currentActiveToken}
-              <div class="ui green empty circular label me-4" />
+              <span class="ui green empty circular label me-2 indicator" />
+            {:else}
+              <span class="ui empty circular label me-2 indicator" />
             {/if}
+            <div class="content">{token.username}</div>
           </div>
         </div>
       {/each}
