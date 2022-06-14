@@ -23,6 +23,7 @@ export const saveToken = (token: Token) => {
         refreshToken: token.refreshToken,
         isActive: true,
         id: token.id,
+        shouldRefresh: Boolean(token.shouldRefresh),
       },
     ]);
   });
@@ -32,10 +33,7 @@ export const saveTokens = (tokens: Array<Token>) => {
   browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
     const currentValue: Array<Token> = result?.vyagutaDevAuthToken ?? [];
 
-    setTokenInLocalStorage([
-      ...currentValue,
-      ...tokens
-    ]);
+    setTokenInLocalStorage([...currentValue, ...tokens]);
   });
 };
 
@@ -73,6 +71,23 @@ export const editToken = (id: number, token: string, username: string) => {
             username: username,
             accessToken: token,
             isActive: true,
+          }
+        : { ...cv }
+    );
+
+    setTokenInLocalStorage(newValue);
+  });
+};
+
+export const updateToken = (id: number, token: Token) => {
+  browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+    const currentValue: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+    const newValue = currentValue.map((cv) =>
+      cv.id === id
+        ? {
+            ...cv,
+            ...token,
           }
         : { ...cv }
     );

@@ -74,3 +74,8 @@ main {
 .ui.labels > .label {
   margin: 0;
 }
+
+.ui.slider.checkbox .box:after,
+.ui.slider.checkbox label:after {
+  z-index: 1;
+}

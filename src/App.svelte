@@ -21,6 +21,7 @@
     deleteAllSavedTokens,
     editToken,
     deleteToken,
+updateToken,
   } from "./services/localStorage";
 
   let storedTokens: Array<Token>;
@@ -82,10 +83,14 @@
     getCurrentToken();
   });
 
-  const handleAuth = ({ accessToken, refreshToken, id }: Token) => {
+  const handleAuth = ({ accessToken, refreshToken, id, shouldRefresh }: Token) => {
     clickedId = id;
-    auth({ refreshToken, accessToken }).finally(() => (clickedId = null));
+    auth({ refreshToken, accessToken, shouldRefresh }).finally(() => (clickedId = null));
   };
+
+  const toggleShouldRefreshToken = (token: Token) => {
+    updateToken(token.id, {...token, shouldRefresh: !token.shouldRefresh})
+  }
 
   const handleDeleteAllTokens = () => {
     deleteAllSavedTokens();
@@ -164,6 +169,7 @@
           accessToken: user.token,
           refreshToken: user.token,
           isActive: true,
+          shouldRefresh: true,
           id: id,
         });
         id++;
@@ -336,9 +342,10 @@
             {#if clickedId == token.id}
               <button class="ui loading button small m-0">Loading</button>
             {:else}
-              {#if token.refreshToken === currentActiveToken}
-                <div class="ui green empty circular label me-4" />
-              {/if}
+              <div class="ui slider checkbox"  data-tooltip={`${token.shouldRefresh ? 'Don\'t Refresh': 'Refresh'} the token`}>
+                <input type="checkbox" name="public" on:click={() => toggleShouldRefreshToken(token)} checked={token.shouldRefresh}>
+                <label class="slider-tooltip"></label>
+              </div>
               <button
                 class="ui button small m-0"
                 type="button"
@@ -361,6 +368,9 @@
               alt={token.username}
             />
             <div class="content">{token.username}</div>
+            {#if token.refreshToken === currentActiveToken}
+              <div class="ui green empty circular label me-4" />
+            {/if}
           </div>
         </div>
       {/each}

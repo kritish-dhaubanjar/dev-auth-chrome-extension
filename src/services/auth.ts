@@ -15,6 +15,7 @@ const VALID_URLS = [
 interface OnlyToken {
   accessToken: string;
   refreshToken: string;
+  shouldRefresh?: boolean;
 }
 
 const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
@@ -41,9 +42,8 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
           () => {
             updateTokenIssued();
 
-            browser.scripting.executeScript({
-              target: { tabId: currentTabId },
-              function: () => window.location.reload(),
+            browser.tabs.executeScript(currentTabId, {
+              code: `window.location.reload()`,
             });
 
             window.close();
@@ -57,6 +57,7 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
 export const auth = ({
   accessToken,
   refreshToken,
+  shouldRefresh,
 }: OnlyToken): Promise<Object> => {
   return fetch(
     `https://dev.vyaguta.lftechnology.com/api/auth/authorize?clientId=lms&token=${refreshToken}`
@@ -65,21 +66,23 @@ export const auth = ({
     .then(({ data }) => {
       setAccessToken(data);
 
-      browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
-        const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+      if (shouldRefresh) {
+        browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+          const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
 
-        const activeTokens = savedTokens.map((token) => {
-          return token.refreshToken === refreshToken
-            ? {
-                ...token,
-                refreshToken: data.refreshToken,
-                accessToken: data.accessToken,
-              }
-            : { ...token };
+          const activeTokens = savedTokens.map((token) => {
+            return token.refreshToken === refreshToken
+              ? {
+                  ...token,
+                  refreshToken: data.refreshToken,
+                  accessToken: data.accessToken,
+                }
+              : { ...token };
+          });
+
+          setTokenInLocalStorage(activeTokens);
         });
-
-        setTokenInLocalStorage(activeTokens);
-      });
+      }
 
       currentToken.set(data.refreshToken);
 
