@@ -169,7 +169,7 @@ updateToken,
           accessToken: user.token,
           refreshToken: user.token,
           isActive: true,
-          shouldRefresh: true,
+          shouldRefresh: false,
           id: id,
         });
         id++;
@@ -214,7 +214,7 @@ updateToken,
     >
     <h4 class="ui header middle aligned list mt-0">
       <img
-        src="./assets/patrick.png"
+        src="./assets/ribbyShield.png"
         class="ui circular image small"
         alt="User"
       />
