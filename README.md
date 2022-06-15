@@ -5,8 +5,7 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 ![shields.io](https://blsonepal.com/shields.php?)
 
 #### Preview
-
-![dev_auth_extension_add_user](https://user-images.githubusercontent.com/25634165/120756229-b7ef1a80-c52e-11eb-84c7-8faa8d027a93.png)
+![dev_auth_extension_add_user](https://user-images.githubusercontent.com/25634165/173763743-6527b753-2cf6-45c7-9e9d-416066664b4c.png)
 
 ## Installation
 
