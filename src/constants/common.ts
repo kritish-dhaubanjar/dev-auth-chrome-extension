@@ -8,9 +8,9 @@ export const INITIAL_USER_STATE: User = {
 };
 
 export const FORM_VIEW = {
-  ADD_USER: 'ADD_USER',
-  IMPORT: 'IMPORT',
-}
+  ADD_USER: "ADD_USER",
+  IMPORT: "IMPORT",
+};
 
 export const JSON_PLACEHOLDER = `[
   {
@@ -18,4 +18,9 @@ export const JSON_PLACEHOLDER = `[
     "token": "eyJhbGciOiJIUzI1N..."
   }
 ]
-`
+`;
+
+export const AUTH_TOKEN_API =
+  "https://dev.vyaguta.lftechnology.com/api/auth/authorize";
+
+export const CLIENT_ID = "lms";

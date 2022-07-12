@@ -22,10 +22,10 @@
     "cookies",
     "http://localhost/",
     "http://127.0.0.1/",
-    "*://dev.vyaguta.lftechnology.com/",
-    "*://uat.vyaguta.lftechnology.com/",
-    "*://qa.vyaguta.lftechnology.com/",
     "*://*.vyaguta.lftechnology.com/",
+    "*://*.vyaguta.lftechnology.com.np/",
+    "*://*.intranet.lftechnology.com.np/",
+    "*://*.intranet.lftechnology.com/",
     "storage"
   ]
 }
