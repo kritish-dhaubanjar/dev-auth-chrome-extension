@@ -3,6 +3,7 @@ import { currentToken } from "./../store";
 import type { Token } from "src/types/common";
 import { updateTokenIssued } from "./firebase";
 import { setTokenInLocalStorage } from "./localStorage";
+import { AUTH_TOKEN_API, CLIENT_ID } from "./../constants/common";
 
 const VALID_URLS = ["http://localhost", "http://127.0.0.1", "lftechnology.com"];
 const PRODUCTION_URL = "https://vyaguta.lftechnology.com";
@@ -62,9 +63,7 @@ export const auth = ({
   refreshToken,
   shouldRefresh,
 }: OnlyToken): Promise<Object> => {
-  return fetch(
-    `https://dev.vyaguta.lftechnology.com/api/auth/authorize?clientId=lms&token=${refreshToken}`
-  )
+  return fetch(`${AUTH_TOKEN_API}?clientId=${CLIENT_ID}&token=${refreshToken}`)
     .then((res) => res.json())
     .then(({ data }) => {
       const rToken = shouldRefresh ? data.refreshToken : refreshToken;
