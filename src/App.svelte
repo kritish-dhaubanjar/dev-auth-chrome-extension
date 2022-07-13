@@ -83,14 +83,21 @@ updateToken,
     getCurrentToken();
   });
 
-  const handleAuth = ({ accessToken, refreshToken, id, shouldRefresh }: Token) => {
+  const handleAuth = ({
+    accessToken,
+    refreshToken,
+    id,
+    shouldRefresh,
+  }: Token) => {
     clickedId = id;
-    auth({ refreshToken, accessToken, shouldRefresh }).finally(() => (clickedId = null));
+    auth({ refreshToken, accessToken, shouldRefresh }).finally(
+      () => (clickedId = null)
+    );
   };
 
   const toggleShouldRefreshToken = (token: Token) => {
-    updateToken(token.id, {...token, shouldRefresh: !token.shouldRefresh})
-  }
+    updateToken(token.id, { ...token, shouldRefresh: !token.shouldRefresh });
+  };
 
   const handleDeleteAllTokens = () => {
     deleteAllSavedTokens();
@@ -342,9 +349,19 @@ updateToken,
             {#if clickedId == token.id}
               <button class="ui loading button small m-0">Loading</button>
             {:else}
-              <div class="ui slider checkbox"  data-tooltip={`${token.shouldRefresh ? 'Don\'t Refresh': 'Refresh'} the token`}>
-                <input type="checkbox" name="public" on:click={() => toggleShouldRefreshToken(token)} checked={token.shouldRefresh}>
-                <label class="slider-tooltip"></label>
+              <div
+                class="ui slider checkbox"
+                data-tooltip={`${
+                  token.shouldRefresh ? "Don't Refresh" : "Refresh"
+                } the token`}
+              >
+                <input
+                  type="checkbox"
+                  name="public"
+                  on:click={() => toggleShouldRefreshToken(token)}
+                  checked={token.shouldRefresh}
+                />
+                <label class="slider-tooltip" for="public" />
               </div>
               <button
                 class="ui button small m-0"
@@ -387,8 +404,6 @@ updateToken,
         >{isCopied ? "Copied" : "Copy"}</button
       >
     </div>
-
-    
 
     <div class="ui labels flex-space-between">
       <a
