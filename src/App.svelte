@@ -21,8 +21,9 @@
     deleteAllSavedTokens,
     editToken,
     deleteToken,
-updateToken,
+    updateToken,
   } from "./services/localStorage";
+  import { getAppVersionFromManifest } from "./services/browserExtension";
 
   let storedTokens: Array<Token>;
   let currentActiveToken: string = "";
@@ -218,7 +219,9 @@ updateToken,
         class="ui circular image small"
         alt="User"
       />
-      <div class="content">Vyaguta Dev Auth</div>
+      <div class="content">
+        Vyaguta Dev Auth <small>v{getAppVersionFromManifest()}</small>
+      </div>
       <button
         class="right floated mini ui button"
         class:teal={!isFormShown}
