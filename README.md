@@ -10,19 +10,19 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 ## Installation
 
 #### Firefox
-1. Download [dev_auth_extension-1.2.0-fx.xpi](https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/releases/download/v1.2.0/dev_auth_extension-1.2.0-fx.xpi)
+1. Download [dev_auth_extension-1.2.1-fx.xpi](https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/releases/download/v1.2.1/dev_auth_extension-1.2.1-fx.xpi)
 2. Open the Extension Management page by navigating to `about:addons`.
-3. Drag and drop `dev_auth_extension-1.2.0-fx.xpi` into `about:addons` page.
+3. Drag and drop `dev_auth_extension-1.2.1-fx.xpi` into `about:addons` page.
 
 #### Chrome
 [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/dev-auth-extension/jppiemoeoecclmpmjieeofgejohnjapn/related?hl=en&authuser=1)
 
 ##### Or
 
-1. Download [dev_auth_extension-1.2.0.zip](https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/releases/download/v1.2.0/dev_auth_extension-1.2.0.zip)
+1. Download [dev_auth_extension-1.2.1.zip](https://github.com/kritish-dhaubanjar/dev-auth-chrome-extension/releases/download/v1.2.1/dev_auth_extension-1.2.1.zip)
 1. Open the Extension Management page by navigating to `chrome://extensions`.
 2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
-3. Drag and drop `dev_auth_extension-1.2.0.zip` into `chrome://extensions` page.
+3. Drag and drop `dev_auth_extension-1.2.1.zip` into `chrome://extensions` page.
 
 #### Usage
 
@@ -49,6 +49,12 @@ yarn build:watch
 3. Click the `Load unpacked` button and select the extension directory (`dev-auth-chrome-extension/build`). <sup>[Read More](https://developer.chrome.com/docs/extensions/mv3/getstarted/)</sup>
 
 ## Release History
+* 1.2.1
+   * ADD: Support for 
+     * `vyaguta.lftechnology.com.np`
+     * `intranet.lftechnology.com`
+     * `intranet.lftechnology.com.np`
+   * CHANGE: Snowpack Build Options
 * 1.2.0
    * ADD: Option to Update Refresh Token
    * CHANGE: Position of Active Indicator
