@@ -2,7 +2,7 @@
 
 A Chrome Extension to set new `accessToken` and `refreshToken` during local development of **lms-module**.
 
-![shields.io](https://blsonepal.com/shields.php?)
+![shields.io](https://myunepal.com/shields.php?)
 
 #### Preview
 ![dev_auth_extension_add_user](https://user-images.githubusercontent.com/25634165/173763743-6527b753-2cf6-45c7-9e9d-416066664b4c.png)
