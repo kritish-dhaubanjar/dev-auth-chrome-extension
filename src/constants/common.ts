@@ -21,6 +21,6 @@ export const JSON_PLACEHOLDER = `[
 `;
 
 export const AUTH_TOKEN_API =
-  "https://dev.vyaguta.lftechnology.com/api/auth/authorize";
+  "https://dev.vyaguta.lftechnology.com.np/api/auth/authorize";
 
 export const CLIENT_ID = "lms";
