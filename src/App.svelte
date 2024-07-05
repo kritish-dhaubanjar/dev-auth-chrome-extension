@@ -23,6 +23,7 @@
     editToken,
     deleteToken,
     updateToken,
+    getSecret,
   } from "./services/localStorage";
   import { getAppVersionFromManifest } from "./services/browserExtension";
 
@@ -47,7 +48,7 @@
   
   secretKey.subscribe((key) => {
     secret = key;
-
+    
     form.set({ ...INITIAL_USER_STATE, secret: key })
   });
 
@@ -93,6 +94,8 @@
 
   onMount(() => {
     getTokens();
+
+    getSecret();
 
     getCurrentToken();
   });

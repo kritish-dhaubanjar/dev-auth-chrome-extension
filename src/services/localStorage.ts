@@ -51,6 +51,15 @@ export const getTokens = () => {
   });
 };
 
+export const getSecret = () => {
+  browser.storage.local.get(
+    "vyagutaDevAuthSecret",
+    async ({ vyagutaDevAuthSecret }) => {
+      secretKey.set(vyagutaDevAuthSecret);
+    }
+  );
+};
+
 export const deleteAllSavedTokens = () => {
   browser.storage.local.clear(() => {
     const error = chrome.runtime.lastError;
