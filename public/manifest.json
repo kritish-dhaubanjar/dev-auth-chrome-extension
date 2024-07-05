@@ -18,7 +18,14 @@
     "service_worker": "./js/background.js",
     "type": "module"
   },
-  "permissions": ["tabs", "cookies", "storage", "scripting", "activeTab"],
+  "permissions": [
+    "tabs",
+    "cookies",
+    "storage",
+    "scripting",
+    "activeTab",
+    "contextMenus"
+  ],
   "host_permissions": [
     "http://localhost/",
     "http://127.0.0.1/",
