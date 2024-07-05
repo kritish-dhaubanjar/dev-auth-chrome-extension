@@ -6,3 +6,5 @@ export const savedTokens = writable(INITIAL_TOKENS);
 export const currentToken = writable("");
 
 export const tokenIssued = writable(0);
+
+export const secretKey = writable("");
