@@ -80,7 +80,7 @@ main {
   z-index: 1;
 }
 
-.indicator{
+.indicator {
   left: -12px;
   bottom: -8px;
   min-width: 8px !important;
@@ -88,6 +88,10 @@ main {
   position: relative;
 }
 
-.ui.label.indicator{
+.ui.label.indicator {
   border: 2px solid #fff !important;
+}
+
+.w-100 {
+  width: 100%;
 }

@@ -5,8 +5,7 @@
   
   import type { Token, User } from "./types/common";
 
-  import { getUserData } from "./services/user";
-  import browser from "./services/browserExtension";
+  import { getUserData, handleAuthProfile } from "./services/user";
   import { auth, getCurrentToken } from "./services/auth";
   import CopyClipBoard from "./components/common/Clipboard.svelte";
   import { currentToken, savedTokens, tokenIssued, secretKey } from "./store";
@@ -268,6 +267,14 @@
         {!isFormShown ? "Add User" : "Cancel"}
       </button>
     </h4>
+
+    <button
+      class="ui button large mb-12 w-100"
+      type="button"
+      on:click={() => {handleAuthProfile('')}}
+    >
+      Auth Profile</button
+    >
 
     {#if isFormShown}
       <div class="ui secondary pointing menu">

@@ -111,8 +111,7 @@ const setToken = ({ accessToken, refreshToken }) => {
     );
   });
 
-  const code = `window.location.reload();`;
-  chrome.tabs.executeScript(null, { code: code });
+  chrome.tabs.reload();
   // window.close();
 };
 

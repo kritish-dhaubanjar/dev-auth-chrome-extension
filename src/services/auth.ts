@@ -46,9 +46,7 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
           () => {
             updateTokenIssued();
 
-            browser.tabs.executeScript(currentTabId, {
-              code: `window.location.reload()`,
-            });
+            browser.tabs.reload(currentTabId);
 
             window.close();
           }
