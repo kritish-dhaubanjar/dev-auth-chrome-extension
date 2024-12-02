@@ -19,7 +19,7 @@ A Chrome Extension to set new `accessToken` and `refreshToken` during local deve
 3. Drag and drop `dev_auth_extension-1.2.2-fx.xpi` into `about:addons` page.
 
 #### Chrome
-![Install from Chrome Web Store](https://github.com/user-attachments/assets/309f49b2-6b93-4682-a701-443f51794913)
+[![Install from Chrome Web Store](https://github.com/user-attachments/assets/309f49b2-6b93-4682-a701-443f51794913)](https://chrome.google.com/webstore/detail/dev-auth-extension/jppiemoeoecclmpmjieeofgejohnjapn/related?hl=en&authuser=1)
 
 ##### Or
 
