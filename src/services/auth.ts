@@ -46,9 +46,7 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
           () => {
             updateTokenIssued();
 
-            browser.tabs.executeScript(currentTabId, {
-              code: `window.location.reload()`,
-            });
+            browser.tabs.reload(currentTabId);
 
             window.close();
           }
@@ -58,51 +56,55 @@ const setAccessToken = ({ refreshToken, accessToken }: OnlyToken) => {
   });
 };
 
-export const auth = ({
-  accessToken,
-  refreshToken,
-  shouldRefresh,
-}: OnlyToken): Promise<Object> => {
-  return fetch(`${AUTH_TOKEN_API}?clientId=${CLIENT_ID}&token=${refreshToken}`)
-    .then((res) => res.json())
-    .then(({ data }) => {
-      const rToken = shouldRefresh ? data.refreshToken : refreshToken;
+export const auth = ({ refreshToken, shouldRefresh }: OnlyToken) => {
+  browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+    const currentTab = tabs[0];
 
-      setAccessToken({ ...data, refreshToken: rToken });
+    const currentUrl = currentTab.url || "";
 
-      browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
-        const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+    const { api } = getAuthTokenAPI(currentUrl);
 
-        const activeTokens = savedTokens.map((token) => {
-          return token.refreshToken === refreshToken
-            ? {
-                ...token,
-                refreshToken: rToken,
-                accessToken: data.accessToken,
-              }
-            : { ...token };
+    return fetch(`${api}?clientId=${CLIENT_ID}&token=${refreshToken}`)
+      .then((res) => res.json())
+      .then(({ data }) => {
+        const rToken = shouldRefresh ? data.refreshToken : refreshToken;
+
+        setAccessToken({ ...data, refreshToken: rToken });
+
+        browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+          const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+          const activeTokens = savedTokens.map((token) => {
+            return token.refreshToken === refreshToken
+              ? {
+                  ...token,
+                  refreshToken: rToken,
+                  accessToken: data.accessToken,
+                }
+              : { ...token };
+          });
+
+          setTokenInLocalStorage(activeTokens);
         });
 
-        setTokenInLocalStorage(activeTokens);
+        currentToken.set(rToken);
+
+        return data;
+      })
+      .catch((err) => {
+        browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
+          const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
+
+          const activeTokens = savedTokens.map((token) =>
+            token.refreshToken === refreshToken
+              ? { ...token, isActive: false }
+              : { ...token }
+          );
+
+          setTokenInLocalStorage(activeTokens);
+        });
       });
-
-      currentToken.set(rToken);
-
-      return data;
-    })
-    .catch((err) => {
-      browser.storage.local.get("vyagutaDevAuthToken", (result: any) => {
-        const savedTokens: Array<Token> = result?.vyagutaDevAuthToken ?? [];
-
-        const activeTokens = savedTokens.map((token) =>
-          token.refreshToken === refreshToken
-            ? { ...token, isActive: false }
-            : { ...token }
-        );
-
-        setTokenInLocalStorage(activeTokens);
-      });
-    });
+  });
 };
 
 export const getCurrentToken = (tokenName = "refreshToken") => {
@@ -131,4 +133,21 @@ export const getCurrentToken = (tokenName = "refreshToken") => {
       }
     });
   });
+};
+
+export const getAuthTokenAPI = (url: string) => {
+  const authToken = {
+    env: "dev",
+    api: AUTH_TOKEN_API.dev,
+  };
+
+  if (url.includes("https://qa")) {
+    authToken.env = "qa";
+    authToken.api = AUTH_TOKEN_API.qa;
+  } else if (url.includes("https://uat")) {
+    authToken.env = "uat";
+    authToken.api = AUTH_TOKEN_API.uat;
+  }
+
+  return authToken;
 };

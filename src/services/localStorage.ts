@@ -1,13 +1,18 @@
 import type { Token } from "./../types/common.d";
-import { writable } from "svelte/store";
 import browser from "./browserExtension";
 
-import { savedTokens } from "../store";
+import { savedTokens, secretKey } from "../store";
 import { INITIAL_TOKENS } from "../constants/common";
 
 export const setTokenInLocalStorage = (tokens: Array<Token>) => {
   browser.storage.local.set({ vyagutaDevAuthToken: tokens }, function () {
     savedTokens.set(tokens);
+  });
+};
+
+export const setSecretInLocalStorage = (vyagutaDevAuthSecret: string) => {
+  browser.storage.local.set({ vyagutaDevAuthSecret }, function () {
+    secretKey.set(vyagutaDevAuthSecret);
   });
 };
 
@@ -24,6 +29,7 @@ export const saveToken = (token: Token) => {
         isActive: true,
         id: token.id,
         shouldRefresh: Boolean(token.shouldRefresh),
+        userId: token.userId,
       },
     ]);
   });
@@ -43,6 +49,15 @@ export const getTokens = () => {
 
     savedTokens.set(currentValue);
   });
+};
+
+export const getSecret = () => {
+  browser.storage.local.get(
+    "vyagutaDevAuthSecret",
+    async ({ vyagutaDevAuthSecret }) => {
+      secretKey.set(vyagutaDevAuthSecret);
+    }
+  );
 };
 
 export const deleteAllSavedTokens = () => {

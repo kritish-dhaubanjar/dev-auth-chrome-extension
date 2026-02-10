@@ -2,12 +2,13 @@
 <script lang="typescript">
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
-
+  
   import type { Token, User } from "./types/common";
 
+  import { getUserData, handleAuthProfile } from "./services/user";
   import { auth, getCurrentToken } from "./services/auth";
-  import { currentToken, savedTokens, tokenIssued } from "./store";
   import CopyClipBoard from "./components/common/Clipboard.svelte";
+  import { currentToken, savedTokens, tokenIssued, secretKey } from "./store";
   import {
     INITIAL_USER_STATE,
     FORM_VIEW,
@@ -22,8 +23,10 @@
     editToken,
     deleteToken,
     updateToken,
+    getSecret,
   } from "./services/localStorage";
   import { getAppVersionFromManifest } from "./services/browserExtension";
+
 
   let storedTokens: Array<Token>;
   let currentActiveToken: string = "";
@@ -32,6 +35,7 @@
   let editId: number | null;
   let clickedId: number | null = null;
   let totalTokenIssued: number = 0;
+  let secret: string = '';
 
   let formView: string = FORM_VIEW.ADD_USER;
   let json: string = "";
@@ -39,8 +43,14 @@
   savedTokens.subscribe((tokens) => (storedTokens = tokens));
   currentToken.subscribe((token) => (currentActiveToken = token));
   tokenIssued.subscribe((count) => (totalTokenIssued = count));
-
-  const form = writable(INITIAL_USER_STATE);
+  
+  const form = writable({ ...INITIAL_USER_STATE, secret });
+  
+  secretKey.subscribe((key) => {
+    secret = key;
+    
+    form.set({ ...INITIAL_USER_STATE, secret: key })
+  });
 
   const toggleForm = () => {
     isFormShown = !isFormShown;
@@ -54,7 +64,8 @@
   const setEditId = (id: number | null) => (editId = id);
 
   const resetForm = () => {
-    form.set(INITIAL_USER_STATE);
+    form.set({ ...INITIAL_USER_STATE, secret });
+   
     json = "";
   };
 
@@ -66,13 +77,16 @@
     setEditId(null);
   };
 
-  const handleFormSubmit = () => {
-    saveToken({
-      username: $form.name,
-      accessToken: $form.token,
-      refreshToken: $form.token,
-      isActive: true,
-      id: storedTokens.length + 1,
+  const handleFormSubmit = async () => {
+    await getUserData($form, (data: any) => {
+      saveToken({
+        username: data.username,
+        accessToken: data.token,
+        refreshToken: data.token,
+        userId: data.userId,
+        isActive: true,
+        id: storedTokens.length + 1,
+      });
     });
 
     reset();
@@ -80,6 +94,8 @@
 
   onMount(() => {
     getTokens();
+
+    getSecret();
 
     getCurrentToken();
   });
@@ -91,9 +107,8 @@
     shouldRefresh,
   }: Token) => {
     clickedId = id;
-    auth({ refreshToken, accessToken, shouldRefresh }).finally(
-      () => (clickedId = null)
-    );
+    auth({ refreshToken, accessToken, shouldRefresh });
+    clickedId = null;
   };
 
   const toggleShouldRefreshToken = (token: Token) => {
@@ -121,7 +136,12 @@
   const handleEditToken = (token: Token) => {
     formView = FORM_VIEW.ADD_USER;
 
-    form.set({ token: token.refreshToken, name: token.username });
+    form.set({ 
+      name: token.username,
+      secret, 
+      token: token.refreshToken, 
+      userId: token.userId, 
+    });
 
     if (!isFormShown) {
       toggleForm();
@@ -164,26 +184,37 @@
     showComment = false;
   };
 
-  const handleImport = () => {
+  const handleImport = async () => {
     try {
       const users: Array<User> = JSON.parse(json);
       const tokens: Array<Token> = [];
 
       let id = storedTokens.length + 1;
 
-      users.forEach((user) => {
-        tokens.push({
-          username: user.name,
-          accessToken: user.token,
-          refreshToken: user.token,
-          isActive: true,
-          shouldRefresh: false,
-          id: id,
-        });
-        id++;
-      });
+      const callback = (id: number) => {
+        return (data: any) => {
+          tokens.push({
+            username: data.username,
+            accessToken: data.token,
+            refreshToken: data.token,
+            isActive: true,
+            shouldRefresh: false,
+            id: id,
+            userId: data.userId,
+          });
 
-      saveTokens(tokens);
+          if (tokens.length === users.length) {
+            saveTokens(tokens);
+          }
+        };
+      };
+
+      await Promise.all(
+        users.map(async (user) => {
+          await getUserData(user, callback(id));
+          id++;
+        }),
+      );
 
       reset();
     } catch (error) {}
@@ -193,6 +224,7 @@
     const users = storedTokens.map((token) => ({
       name: token.username,
       token: token.accessToken,
+      userId: token.userId,
     }));
 
     const data =
@@ -239,6 +271,14 @@
       </button>
     </h4>
 
+    <button
+      class="ui button large mb-12 w-100"
+      type="button"
+      on:click={() => {handleAuthProfile('')}}
+    >
+      Auth Profile</button
+    >
+
     {#if isFormShown}
       <div class="ui secondary pointing menu">
         <a
@@ -262,6 +302,15 @@
         {#if formView === FORM_VIEW.ADD_USER}
           <form class="ui form" id="tokenForm">
             <div class="field">
+              <label for="User Id">User Id</label>
+              <input
+                name="userId"
+                type="text"
+                id="userId"
+                bind:value={$form.userId}
+              />
+            </div>
+            <div class="field">
               <label for="username">Username</label>
               <input
                 name="username"
@@ -277,6 +326,15 @@
                 rows="2"
                 id="token"
                 bind:value={$form.token}
+              />
+            </div>
+            <div class="field">
+              <label for="Secret Key">Secret Key</label>
+              <input
+                name="secret"
+                type="text"
+                id="secret"
+                bind:value={$form.secret}
               />
             </div>
             <button

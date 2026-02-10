@@ -8,6 +8,8 @@
     "test": "web-test-runner \"src/**/*.test.ts\""
   },
   "dependencies": {
+    "jwt-decode": "^4.0.0",
+    "jwt-encode": "^1.0.1",
     "svelte": "^3.37.0"
   },
   "devDependencies": {
@@ -19,6 +21,7 @@
     "@tsconfig/svelte": "^1.0.10",
     "@types/chai": "^4.2.17",
     "@types/chrome": "^0.0.137",
+    "@types/jwt-encode": "^1.0.3",
     "@types/mocha": "^8.2.2",
     "@types/snowpack-env": "^2.3.3",
     "@web/test-runner": "^0.13.3",
